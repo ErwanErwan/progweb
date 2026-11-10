@@ -19,20 +19,80 @@ export async function getAllContacts() {
 
 // Get contact by Id
 export async function getContactById(id) {
-  // todo
+    try {
+        const contact = await Contact.findById(id);
+        return contact;
+        
+    } catch (err) {
+        return { success: false, message: "Contacts not found " + err };
+    }
 }
 
 // Add a new contact, returns the added contact
 export async function addContact(body) {
-  // todo
+    try {
+        const contact = new Contact(body);
+        await contact.save();
+
+        return {
+            success: true,
+            data: contact
+        };
+    } catch (err) {
+        return {
+            success: false,
+            message: "Contact not added: " + err.message
+        };
+    }
 }
  
 // Update an existing contact
 export async function updateContact(id, name = null, age = null) {
-   // todo
+   try {
+        const contact = await Contact.findById(id);
+        if (!contact) {
+            return { success: false, message: "Contact not found" };
+        }
+
+        if (name !== null) {
+            contact.name = name;
+        }
+        if (age !== null) {
+            contact.age = age;
+        }
+
+        await contact.save();
+
+        return {
+            success: true,
+            data: contact
+        };
+    } catch (err) {
+        return {
+            success: false,
+            message: "Contact not updated: " + err.message
+        };
+    }
 }
     
 // Remove an existing contact
 export async function removeContact(id) {
-  // todo
+  try {
+        const contact = await Contact.findByIdAndDelete(id);
+        if (!contact) {
+            return { success: false, message: "Contact not found" };
+        }
+
+        return {
+            success: true,
+            data: contact
+        };
+    } catch (err) {
+        return {
+            success: false,
+            message: "Contact not removed: " + err.message
+        };
+    }
 }
+
+
