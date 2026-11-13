@@ -15,6 +15,10 @@ const app = express();
 app.use(morgan('combined'));
 app.use(express.json());
 
+// Configuration des vues
+app.set('views', './views');
+app.set('view engine', 'ejs');
+
 // Connexion à MongoDB
 mongoose.connect(mongoUrl, { dbName })
   .then(() => console.log('Connecté à MongoDB'))
@@ -22,8 +26,6 @@ mongoose.connect(mongoUrl, { dbName })
 
 // Routes
 app.use('/api/contacts', contactRoutes);
-
-app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
   res.send('Hello !');
