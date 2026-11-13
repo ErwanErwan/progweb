@@ -5,18 +5,19 @@ import User from '../models/userModel.js';
 const jwtSecret = process.env.JWT_SECRET || 'development-secret';
 
 export async function registerUser(email, password) {
-    if (!email || !password) {
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (!normalizedEmail || typeof password !== 'string' || password.length === 0) {
         return { success: false, message: 'Email and password are required' };
     }
 
     try {
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email: normalizedEmail });
         if (existingUser) {
             return { success: false, message: 'User already exists' };
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ email, password: hashedPassword });
+        const user = await User.create({ email: normalizedEmail, password: hashedPassword });
 
         return {
             success: true,
@@ -28,12 +29,13 @@ export async function registerUser(email, password) {
 }
 
 export async function loginUser(email, password) {
-    if (!email || !password) {
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (!normalizedEmail || typeof password !== 'string' || password.length === 0) {
         return { success: false, message: 'Email and password are required' };
     }
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return { success: false, message: 'Invalid credentials' };
         }

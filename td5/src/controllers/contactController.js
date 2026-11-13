@@ -1,30 +1,39 @@
 import Contact from '../models/contactModel.js';
+import { isValidObjectId } from 'mongoose';
 
 // Get all contacts
 export async function getAllContacts() {
-    let total = await Contact.countDocuments({});
-    let limit = parseInt(total);
-
     try {
-        const contacts = await Contact.find().limit(limit);
+        const total = await Contact.countDocuments({});
+        const contacts = await Contact.find();
         return {
             success: true,
             data: contacts,
             total: total.toString(),
         }
     } catch (err) {
-        return { success: false, message: "Contacts not found " + err };
+        return { success: false, status: 500, message: "Contacts not found " + err.message };
     }
 }
 
 // Get contact by Id
 export async function getContactById(id) {
+    if (!isValidObjectId(id)) {
+        return { success: false, status: 400, message: "Invalid contact id" };
+    }
+
     try {
         const contact = await Contact.findById(id);
-        return contact;
-        
+        if (!contact) {
+            return { success: false, status: 404, message: "Contact not found" };
+        }
+
+        return {
+            success: true,
+            data: contact
+        };
     } catch (err) {
-        return { success: false, message: "Contacts not found " + err };
+        return { success: false, status: 500, message: "Contacts not found " + err.message };
     }
 }
 
@@ -41,6 +50,7 @@ export async function addContact(body) {
     } catch (err) {
         return {
             success: false,
+            status: 400,
             message: "Contact not added: " + err.message
         };
     }
@@ -48,10 +58,14 @@ export async function addContact(body) {
  
 // Update an existing contact
 export async function updateContact(id, name = null, age = null) {
+   if (!isValidObjectId(id)) {
+        return { success: false, status: 400, message: "Invalid contact id" };
+   }
+
    try {
         const contact = await Contact.findById(id);
         if (!contact) {
-            return { success: false, message: "Contact not found" };
+            return { success: false, status: 404, message: "Contact not found" };
         }
 
         if (name !== null) {
@@ -70,6 +84,7 @@ export async function updateContact(id, name = null, age = null) {
     } catch (err) {
         return {
             success: false,
+            status: 400,
             message: "Contact not updated: " + err.message
         };
     }
@@ -77,10 +92,14 @@ export async function updateContact(id, name = null, age = null) {
     
 // Remove an existing contact
 export async function removeContact(id) {
+  if (!isValidObjectId(id)) {
+        return { success: false, status: 400, message: "Invalid contact id" };
+  }
+
   try {
         const contact = await Contact.findByIdAndDelete(id);
         if (!contact) {
-            return { success: false, message: "Contact not found" };
+            return { success: false, status: 404, message: "Contact not found" };
         }
 
         return {
@@ -90,6 +109,7 @@ export async function removeContact(id) {
     } catch (err) {
         return {
             success: false,
+            status: 400,
             message: "Contact not removed: " + err.message
         };
     }

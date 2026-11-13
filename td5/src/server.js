@@ -3,6 +3,8 @@ import connectDB from "./config/db.js";
 import routes from './routes/index.js';
 import swaggerJsDoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 process.loadEnvFile();
 
@@ -12,22 +14,19 @@ const port = process.env.PORT || 8080;
 const app = express();
 connectDB();
 
+app.use(express.json());
 app.use('/api', routes);
 
-  app.listen(port, host, () => {
-      console.log(`Server is running on http://${host}:${port}`)
-  });
-
-  /**
-   * @openapi
-   * /docs:
-   *   get:
-   *     description: API documentation
-   *     responses:
-   *       '200':
-   *         description: Returns the API documentation
-   */
-  const options = {
+/**
+ * @openapi
+ * /docs:
+ *   get:
+ *     description: API documentation
+ *     responses:
+ *       '200':
+ *         description: Returns the API documentation
+ */
+const options = {
     definition: {
         openapi: '3.0.0',
         info: {
@@ -51,8 +50,15 @@ app.use('/api', routes);
             },
         ],
     },
-    apis: ["./src/routes/*.js"],
+    apis: [path.join(path.dirname(fileURLToPath(import.meta.url)), 'routes/*.js')],
 }
 
 const openapiSpecification = swaggerJsDoc(options);
+app.get('/docs/openapi.json', (req, res) => {
+    res.json(openapiSpecification);
+});
 app.use('/docs', serve, setup(openapiSpecification));
+
+app.listen(port, host, () => {
+    console.log(`Server is running on http://${host}:${port}`)
+});

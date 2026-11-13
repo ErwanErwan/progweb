@@ -28,6 +28,7 @@ Authorization: Bearer <token>
 
 ### route get contact id (getContactById)
 GET http://localhost:5000/api/contacts/6ac8af15b5b244ebe29826e2
+Authorization: Bearer <token>
 
 ### post contacts (addContact)
 POST http://localhost:5000/api/contacts

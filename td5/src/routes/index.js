@@ -41,7 +41,8 @@ router.get('/', function (req, res) {
  *         description: Invalid request or user already exists
  */
 router.post('/auth/register', async (req, res) => {
-    const response = await registerUser(req.body.email, req.body.password);
+    const { email, password } = req.body ?? {};
+    const response = await registerUser(email, password);
     res.status(response.success ? 201 : 400).json(response);
 });
 
@@ -69,7 +70,8 @@ router.post('/auth/register', async (req, res) => {
  *         description: Invalid credentials
  */
 router.post('/auth/login', async (req, res) => {
-    const response = await loginUser(req.body.email, req.body.password);
+    const { email, password } = req.body ?? {};
+    const response = await loginUser(email, password);
     res.status(response.success ? 200 : 401).json(response);
 });
 
@@ -90,7 +92,7 @@ router.route('/contacts').get(requireAuth, async (req, res) => {
     if (response.success == true) {
         res.status(200).json(response);
     } else {
-        res.status(404).json(response);
+        res.status(response.status || 500).json(response);
     }
 });
 
@@ -116,7 +118,7 @@ router.route('/contacts/:id').get(requireAuth, async (req, res) => {
     if (response.success == true) {
         res.status(200).json(response);
     } else {
-        res.status(404).json(response);
+        res.status(response.status || 500).json(response);
     }
 });
 
@@ -139,15 +141,15 @@ router.route('/contacts/:id').get(requireAuth, async (req, res) => {
  *               age:
  *                 type: number
  *     responses:
- *       '200':
+ *       '201':
  *         description: Returns the newly added contact
  */
 router.route('/contacts').post(requireAuth, async (req, res) => {
     let response = await addContact(req.body);
     if (response.success == true) {
-        res.status(200).json(response);
+        res.status(201).json(response);
     } else {
-        res.status(404).json(response);
+        res.status(response.status || 500).json(response);
     }
 });
 
@@ -180,11 +182,15 @@ router.route('/contacts').post(requireAuth, async (req, res) => {
  *         description: Returns the updated contact
  */
 router.route('/contacts/:id').put(requireAuth, async (req, res) => {
-    let response = await updateContact(req.params.id, req.body.name, req.body.age);
+    let response = await updateContact(
+        req.params.id,
+        req.body?.name ?? null,
+        req.body?.age ?? null
+    );
     if (response.success == true) {
         res.status(200).json(response);
     } else {
-        res.status(404).json(response);
+        res.status(response.status || 500).json(response);
     }
 });
 
@@ -210,7 +216,7 @@ router.route('/contacts/:id').delete(requireAuth, async (req, res) => {
     if (response.success == true) {
         res.status(200).json(response);
     } else {
-        res.status(404).json(response);
+        res.status(response.status || 500).json(response);
     }
 });
 

@@ -4,9 +4,9 @@ const jwtSecret = process.env.JWT_SECRET || 'development-secret';
 
 export default function requireAuth(req, res, next) {
     const authorization = req.headers.authorization;
-    const [scheme, token] = authorization ? authorization.split(' ') : [];
+    const [scheme, token, extra] = authorization ? authorization.split(' ') : [];
 
-    if (scheme !== 'Bearer' || !token) {
+    if (scheme !== 'Bearer' || !token || extra) {
         return res.status(401).json({ success: false, message: 'Authorization token required' });
     }
 
