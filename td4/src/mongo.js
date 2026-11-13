@@ -17,10 +17,10 @@ async function main() {
     let client;
     try {
         console.log('Trying to connect...')
-        const client = new MongoClient(mongoUrl);
-        connection = await client.connect();
+        client = new MongoClient(mongoUrl);
+        await client.connect();
         console.log("Successfully connected to MongoDB.");
-        const db = connection.db(databaseName);
+        const db = client.db(databaseName);
         const contacts = db.collection(collectionName);
         await printAllContacts(contacts);
     } catch (e) {

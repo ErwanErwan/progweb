@@ -1,6 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import contactRoutes from './routes/index.js';
 
 process.loadEnvFile('.env');
@@ -16,7 +18,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 
 // Configuration des vues
-app.set('views', './views');
+app.set('views', path.join(path.dirname(fileURLToPath(import.meta.url)), 'views'));
 app.set('view engine', 'ejs');
 
 // Connexion à MongoDB

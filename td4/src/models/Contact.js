@@ -4,11 +4,17 @@ const contactSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        minlength: 1
     },
     age: {
         type: Number,
-        required: true
+        required: true,
+        min: 0,
+        validate: {
+            validator: Number.isInteger,
+            message: 'L’âge doit être un entier.'
+        }
     }
 }, {
     timestamps: true
