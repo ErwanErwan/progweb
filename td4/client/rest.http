@@ -1,2 +1,38 @@
 ### Default URL
 GET http://localhost:8080/
+
+### Home
+GET http://localhost:8080/home
+
+### User page
+GET http://localhost:8080/user/bob
+
+### Lister tous les contacts
+GET http://localhost:8080/api/contacts
+
+### Obtenir un contact par ID
+# Remplacez <id> par un vrai ID MongoDB après avoir listé les contacts
+GET http://localhost:8080/api/contacts/<id>
+
+### Créer un nouveau contact
+POST http://localhost:8080/api/contacts
+Content-Type: application/json
+
+{
+  "name": "Dupont",
+  "age": 30
+}
+
+### Mettre à jour un contact
+# Remplacez <id> par un vrai ID MongoDB
+PUT http://localhost:8080/api/contacts/<id>
+Content-Type: application/json
+
+{
+  "name": "Dupont",
+  "age": 31
+}
+
+### Supprimer un contact
+# Remplacez <id> par un vrai ID MongoDB
+DELETE http://localhost:8080/api/contacts/<id>
