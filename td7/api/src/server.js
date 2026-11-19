@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import routes from './routes/index.js';
 import swaggerJsDoc from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
+import { connectRedis } from './config/redis.js';
 
 const port = 80;
 
@@ -51,6 +52,7 @@ const app = express();
 app.use(morgan('dev'))
 app.use(express.json());
 connectDB();
+connectRedis();
 
 const openapiSpecification = swaggerJsDoc(options);
 app.use('/docs', serve, setup(openapiSpecification));
